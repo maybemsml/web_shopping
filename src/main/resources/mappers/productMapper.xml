@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="spring.mvc.pj_hyr.dao.ProductDAO">
+  <!-- 장바구니 -->
+	<!-- 목록 -->
+	<select id="cartList" parameterType="String" resultType="spring.mvc.pj_hyr.dto.CartDTO">
+		SELECT * FROM cartview WHERE cust_id = #{sessionId}
+	</select>
+	<!-- 담긴 건수 -->
+	<select id="cartCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) as cnt FROM cart WHERE cust_id = #{sessionId}
+	</select>
+	<!-- add -->
+		<select id="cartAdd1" parameterType="spring.mvc.pj_hyr.dto.CartDTO" resultType="String">
+			SELECT quantity FROM cart WHERE cust_id = #{cust_id} and pdNo=#{pdNo}
+		</select>
+		<insert id="cartAdd2" parameterType="spring.mvc.pj_hyr.dto.CartDTO">
+			INSERT INTO cart VALUES ((SELECT NVL(MAX(cartNo)+1, 1) FROM cart), #{pdNo}, #{quantity}, #{cust_id})
+		</insert>
+		<update id="cartAdd3" parameterType="spring.mvc.pj_hyr.dto.CartDTO">
+			update cart set quantity = #{quantity}
+		</update>
+	<!-- delete -->
+	<delete id="cartDelete" parameterType="java.util.Map">
+		DELETE cart WHERE pdNo = #{pdNo} AND cust_id = #{sessionId}
+	</delete>
+	<!-- cartbuy -->
+	<insert id="cartBuy" parameterType="spring.mvc.pj_hyr.dto.OrderDTO">
+		INSERT INTO orderlist(odNo, pdNo, quantity, price, cust_id, odDate, odStatus)
+		VALUES((SELECT NVL(MAX(odNo)+1, 1) FROM orderlist), #{pdNo}, #{quantity}, #{price}, #{cust_id}, default ,default)
+	</insert>
+	<!-- 바로 구매 -->
+	<insert id="nowBuy"	parameterType="spring.mvc.pj_hyr.dto.OrderDTO">
+		INSERT INTO orderlist(odNo, pdNo, quantity, price, cust_id, odDate, odStatus)
+		VALUES((SELECT NVL(MAX(odNo)+1, 1) FROM orderlist), #{pdNo}, #{quantity}, #{price}, #{cust_id}, default ,default)
+	</insert>
+		
+		
+		
+</mapper>   

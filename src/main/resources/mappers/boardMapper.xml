@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="spring.mvc.pj_hyr.dao.BoardDAO">
+
+	<!-- 공지 목록 -->
+	<select id="noticeList" parameterType="java.util.Map" resultType="spring.mvc.pj_hyr.dto.NoticeDTO">
+		SELECT * FROM (SELECT A.*, rownum AS rn
+						 FROM (SELECT * FROM notice WHERE show='y' ORDER BY num DESC) A)
+		 WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+	
+	<!-- Cnt -->
+	<select id="noticeCnt" resultType="int">
+		SELECT count(*) as cnt from notice
+	</select>
+	
+	<!-- 상세페이지 -->
+	<select id="getNoticeDetail" parameterType="int" resultType="spring.mvc.pj_hyr.dto.NoticeDTO">
+		SELECT * FROM notice WHERE num = #{num}
+	</select>
+	
+	<!-- 수정처리 -->
+	<update id="updateNotice" parameterType="spring.mvc.pj_hyr.dto.NoticeDTO">
+		UPDATE notice SET title = #{title}, content = #{content}, category=#{category} WHERE num = #{num}
+	</update>
+	
+	<!-- 삭제처리 -->
+	<update id="deleteNotice" parameterType="int">
+		UPDATE notice SET show='n' WHERE num=#{num}
+	</update>
+	
+	<!-- 글 등록 -->
+	<insert id="writeNotice" parameterType="spring.mvc.pj_hyr.dto.NoticeDTO">
+		INSERT INTO notice
+			 VALUES ((SELECT NVL(MAX(num)+1, 1) FROM notice), #{title}, #{category}, #{content}, 0, sysdate, 'y')
+	</insert>
+</mapper>   

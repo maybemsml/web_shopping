@@ -1,0 +1,67 @@
+@charset "UTF-8";
+/* noticeDetail */
+
+#container{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+#contents{
+	width:100%;
+	align-items: center;
+	margin:0 auto;
+	text-align:center;
+}
+
+#menuName {
+	font-size: 30px;
+	color:grey;
+	font-style: italic;
+	opacity:0.8;
+}
+
+.table_div{
+	margin-top:30px;
+	width:100%;	
+}
+
+.table_div table{
+	border-collapse:collapse;
+	width:90%;
+	align-items:center;
+}
+
+.table_div table th{
+	background:#f6f3f0;
+	font-size:15px;
+}
+
+.table_div table th, td{
+	height: 40px;
+	padding:5px 5px 5px 5px;
+	text-align:center;
+	font-size:13px;
+	vertical-align: middle;
+}
+
+.input{
+	width : 500px;
+	height : 30px;
+	border : 1px solid gray;
+	padding : 0 0 0 10px;
+}
+
+.inputButton {
+	background : dark-yellow;
+	font-size : 14px;
+	padding : 2px 5px;
+	
+}
+
+.noticeDetail{
+	width:90%;
+	
+}
+
+

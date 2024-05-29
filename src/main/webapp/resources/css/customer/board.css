@@ -1,0 +1,135 @@
+@charset "UTF-8";
+
+/* 공지 및 리뷰 공통 */
+	#container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		
+		width: 100%;
+		
+	}
+	
+	#menuName {
+		font-size: 30px;
+		color:grey;
+		font-style: italic;
+		margin-top: 60px;
+		margin-bottom: 15px;
+		opacity:0.8;
+	}
+	
+	#title{
+		font-size:20px;
+		color:black;
+		opacity:0.8;
+		display: flex;
+		flex-direction: column;
+		align-items:center;
+		padding:20px 0 0 0;
+	}
+	
+	.short{
+		font-size:11px;
+		margin-bottom:20px;
+	}
+	
+	/* Notice */
+	#cate{
+		background:#f6f3f0;
+	}
+	
+	#noticeBoard{
+		opacity:0.9;
+		margin:auto;
+		min-width:1000px;
+		text-align:center;
+	}
+	.pagination>li>a {
+		background-color: #FFFFFF;
+		border-color: #FFFFFF;
+		color: #826d54;
+		-bs-pagination-color:#000000;
+		-bs-pagination-active-bg: #000000;
+		-bs-pagination-active-border-color: #FFFFFF;
+	}
+	
+	.pagination {
+	    -bs-pagination-hover-color: #826d54;
+	    -bs-pagination-hover-bg: white;
+	    -bs-pagination-hover-border-color: #826d54;
+	    -bs-pagination-focus-color: #826d54;
+	    -bs-pagination-focus-bg: white;
+	    -bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(130, 109, 84, 0.25);
+	    -bs-pagination-active-color: #fff;
+	    -bs-pagination-active-bg: #fff;
+	    -bs-pagination-active-border-color: #826d54;
+	}
+	
+	.page-link:hover {
+	    color: #826d54;
+	}
+	
+	.page-link:focus {
+	    z-index: 3;
+	    color: #826d54;
+	    background-color: var(--bs-pagination-focus-bg);
+	    outline: 0;
+	    box-shadow: 0 0 0 0.25rem rgba(130, 109, 84, 0.25);
+	}
+	
+	/* review */
+	
+	#bestReviewContainer{
+		background:#f6f3f0;
+	}
+	
+	#reviewContainer{
+		margin-top:50px;
+		margin-bottom:50px;
+		display:grid;
+		grid-template-columns: repeat(5, 1fr);
+		margin:auto;
+	}
+	.reviewContents{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		max-width:350px;
+		padding: 5px 5px 5px 5px;	
+	}
+	.reviewBoard{
+		max-width:300px;
+	}
+	
+	#reviewImg{
+		width:100%;
+		max-width:150px;
+		height:auto;
+	}
+	
+	#reviewSerial{
+		margin-top:30px;
+		font-size:8px;
+	}
+	
+	#reviewPfName{
+		margin-top:5px;
+		font-size:9px;
+		font-weight:600;
+	}
+	#reviewStarPoint{
+		font-size:6px;
+		color:#826d54;
+	}
+	#reviewContainer p{
+		font-size:6px;
+		color:grey;
+		opacity:0.9;
+	}
+	#reviewPfPrice{
+		font-size:6px;
+		margin-bottom:30px;
+	}
+

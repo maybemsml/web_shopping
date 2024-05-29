@@ -1,0 +1,96 @@
+@charset "UTF-8";
+/* join.css */
+#container{
+	width:100%;
+	margin:0 auto;
+}
+
+#menuName {
+	font-size: 30px;
+	color:grey;
+	font-style: italic;
+	text-align:center;
+	margin-top: 60px;
+	opacity:0.8;
+}
+#cAlert{
+	color:grey;
+	font-size:10px;
+	text-align:right;
+}
+
+
+#contents{
+	max-width:900px;
+	min-width:900px;
+	width:100%;
+	margin:0 auto;
+	
+}
+
+#section1{
+	padding:10px 20px 5px 0;
+	border-bottom:5px solid #f6f3f0;
+	
+}
+#section2{
+	padding:10px 20px 20px 0;
+	border-bottom:5px solid #f6f3f0;
+	
+}
+
+
+#s2_inner{
+	width:100%;
+}
+
+.join{
+	display:flex; /* 한 줄(수평)로 배치*/
+	justify-content:center; /* 가운데 배치 */
+	align-items:center;
+	max-width:900px;
+	margin:40px 10px;
+	height:auto;	
+}
+
+/* 가운데 위치 테스트 완료 */
+
+.join th{
+	font-size:13px;
+	font-weight:bold;
+	width:160px;
+	height:40px;
+	text-align:center;
+	padding-right:10px;
+	padding-left:20px;
+	border-bottom:0.7px solid #ccc;
+	background:#f6f3f0;
+	margin-right:5px;
+}
+
+.join td{
+	padding:10px 10px 10px 10px;
+	border-bottom:1px solid #ccc;
+	vertical-align: middle;
+	font-size:13px;	
+}
+
+
+input{
+	padding:12px 12px 12px 12px;
+}
+
+.input{
+	width : 500px;
+	height : 30px;
+	border : 1px solid gray;
+	padding : 0 0 0 10px;
+}
+
+.inputButton {
+	background : dark-yellow;
+	font-size : 13px;
+	padding : 2px 5px;
+	
+}
+

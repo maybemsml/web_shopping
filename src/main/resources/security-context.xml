@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+	http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Namespace탭 : security 체크 후 선택 > 오른쪽 4.2 버전 체크 , resources와 common 폴더는 적용 x(none)-->
+	<security:http pattern="/resources/**" security="none" />
+	<security:http pattern="/common/**" security="none" />
+	<security:http auto-config="true" use-expressions="true" create-session="never">
+		
+		<!-- 관리자 권한 영역 : 상품관리 ==> .pd로 끝나면 admin만 접근 가능, access는 정해진 문법 -->
+		<security:intercept-url pattern="/**.ad" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/**.bd" access="hasRole('ROLE_ADMIN')" />
+		
+		<!-- 권한에 상관없이 접속 가능 영역(guest도 접속가능) -->
+		<security:intercept-url pattern="/**.do" access="permitAll"/>
+		<security:intercept-url pattern="/**.pf" access="permitAll"/>
+		
+		<!-- 로그인한 사용자 영역(customer + 관리자) : id가 PK이므로 권한이 하나만 부여, hasAnyRole을 사용하여 여러 개 인가 권한 부여-->
+		<!-- <security:intercept-url pattern="/**.bo" access="hasAnyRole('ROLE_ADMIN','ROLE_USER')" /> -->
+		
+		<!-- 로그인폼 ==> 사용시 컨트롤러 필요x -->
+		<security:form-login login-page="/login.do"
+			login-processing-url="/loginAction.do"
+			authentication-success-handler-ref="userLoginSuccessHandler"
+			authentication-failure-handler-ref="userLoginFailureHandler"
+			username-parameter="cust_id" password-parameter="password" />
+	
+		<!-- 같은 브라우저에서 여러창 동시접속수 / 세션 만료시 이동할 주소 초대 세션 초과시 에러옵션-->
+		<security:session-management>
+			<security:concurrency-control max-sessions="2"
+				expired-url="/login.do"
+				error-if-maximum-exceeded="true"
+			/>
+		</security:session-management>
+		
+		<!-- 접근 권한이 없는 경우 작동 -->
+		<security:access-denied-handler ref="userDeniedHandler"/>	
+		
+	</security:http>
+	
+	
+		<!-- 로그인 성공시 작동 -->
+		<bean id="userLoginSuccessHandler" class="spring.mvc.pj_hyr.security.UserLoginSuccessHandler">
+			<constructor-arg name="sqlSession" ref="sqlSession" /> <!-- 해당 클래스에서 매개변수 생성자 추가 후 주석 해제  -->
+		</bean>
+		
+		<!-- 로그인 실패시 작동 -->
+		<bean id="userLoginFailureHandler" class="spring.mvc.pj_hyr.security.UserLoginFailureHandler">
+			<constructor-arg name="sqlSession" ref="sqlSession" /> <!-- dataSource-config.xml  -->
+			<constructor-arg name="passwordEncoder" ref="bCryptPasswordEncoder"/>
+		</bean>
+		
+		<!-- 접근권한이 없는 경우 작동 -->
+		<bean id="userDeniedHandler" class="spring.mvc.pj_hyr.security.UserDeniedHandler"/>
+		
+		<!-- 로그인 인증처리 클래스 : 비밀번호 인증, 로그인 성공/실패/불가 여부 판단 -->
+		<!-- userService는 login-processing-url="/loginAction.do"에 의해 자동호출, 그러므로 loginAction.do 주석처리-->
+		<bean id="userService" class="spring.mvc.pj_hyr.security.UserAuthenticationService">
+			<constructor-arg name="sqlSession" ref="sqlSession" />
+		</bean>
+		
+		<!-- 비밀번호 암호화 클래스 -->
+		<bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+		
+		
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

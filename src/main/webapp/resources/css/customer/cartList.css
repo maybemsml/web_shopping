@@ -1,0 +1,54 @@
+@charset "UTF-8";
+
+#container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	
+	width: 100%;
+}
+
+#menuName {
+	font-size: 30px;
+	color:grey;
+	font-style: italic;
+	margin-top: 60px;
+	opacity:0.8;
+}
+
+table{
+	min-width:600px;
+	max-width:900px;
+	margin-top:50px;
+	text-align:center;
+}
+table tr td{
+	vertical-align: middle;
+	font-size:13px;
+	opacity:0.8;
+	text-align:center;
+}
+
+#Name{
+	text-align:left;
+	vertical-align: middle;
+	padding:10px 0 0 0;
+	
+}
+input, button{
+	border:none;
+}
+.inputButton{
+	padding:10px 13px 10px 13px;
+	font-size:11px;
+}
+
+#chooseBuy{
+	background:#2b2a28;
+	color:white;
+}
+
+#allBuy{
+	background:#e0ddda;
+	color:#333333;	
+}

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="spring.mvc.pj_hyr.dao.CustomerDAO">
+
+<!-- security -->
+	<!-- [인증] UserAuthenticationService - loadUserByUsername(String id) -->
+	<select id="selectCustomer" parameterType="String" resultType="spring.mvc.pj_hyr.dto.CustomerDTO">
+		SELECT * FROM customer WHERE cust_id=#{id}
+	</select>
+	<!-- [성공] UserLoginSuccessHandler - onAuthenticationSuccess -->
+	<select id="authorityCheck" parameterType="String" resultType="String">
+		SELECT authority FROM customer WHERE cust_id=#{cust_id}
+	</select>
+	<!-- [실패] UserLoginFailureHandler - onAuthenticationFailure --> <!-- idCheck 함께 사용 -->
+	<select id="passwordCheck" parameterType="String" resultType="String">
+		SELECT password FROM customer WHERE cust_id=#{cust_id}
+	</select>
+	
+	<!-- 이메일 인증 -->
+	<select id="selectKey" parameterType="String" resultType="int">
+		SELECT count(*) FROM customer WHERE key = #{key}
+	</select>
+	<!-- 등급변경(key 일치 시 인증성공 => 1로 update) -->
+	<update id="updateGrade" parameterType="String">
+		UPDATE customer SET enabled=1 WHERE key=#{key}
+	</update>
+
+	<!-- 중복확인 -->
+	<select id="idCheck" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM customer WHERE cust_id=#{strId}
+	</select>
+	
+	<!-- 회원가입 처리 --><!-- security 컬럼 추가 -->
+	<insert id="insertCustomer" parameterType="spring.mvc.pj_hyr.dto.CustomerDTO">
+		INSERT INTO customer(cust_id, password, username, birthday, address, hp, email, gender, regdate, key)
+		VALUES (#{cust_id}, #{password}, #{username}, #{birthday}, #{address}, #{hp}, #{email}, #{gender}, #{regDate}, #{key})
+	</insert>
+	
+	<!-- 로그인 처리 및 회원정보 인증(수정, 탈퇴시) --> <!-- security 적용시 미사용 -->
+	<select id="idPasswordChk" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM customer WHERE cust_id = #{strId} AND password = #{strPassword}
+	</select>
+
+	<!-- 회원탈퇴 -->
+	<delete id="deleteCustomer" parameterType="String">
+		DELETE FROM customer WHERE cust_id=#{strId}
+	</delete>
+	
+	<!-- 상세페이지 -->
+	<select id="getCustomerDetail" parameterType="String" resultType="spring.mvc.pj_hyr.dto.CustomerDTO">
+		SELECT * FROM customer WHERE cust_id=#{strId}
+	</select>
+	
+	<!-- 회원정보 수정 -->
+	<update id="getupdateCustomer" parameterType="spring.mvc.pj_hyr.dto.CustomerDTO">
+		UPDATE customer SET password=#{password}, username=#{username}, birthday=#{birthday}, address=#{address}, hp=#{hp}, email=#{email}, gender=#{gender}, regDate=#{regDate} WHERE cust_id=#{cust_id}
+	</update>
+
+<!-- notice customer ver.-->
+	<!-- 공지목록 -->
+	<select id="noticeList" parameterType="java.util.Map" resultType="spring.mvc.pj_hyr.dto.NoticeDTO">
+		SELECT * FROM ( SELECT A.*, rownum AS rn
+						 FROM (SELECT * FROM notice WHERE show='y' ORDER BY num DESC) A)
+						WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+	
+	<!-- 공지글갯수 -->
+	<select id="noticeCnt" resultType="int">
+		SELECT count(*) as cnt from notice
+	</select>
+	
+	<!-- 조회수 증가 -->
+	<update id="plusReadCnt_notice" parameterType="int">
+		UPDATE notice SET readCnt = readCnt + 1 WHERE num = #{num}
+	</update>
+	
+	<!-- 상세페이지 -->
+	<select id="getNoticeDetail" parameterType="int" resultType="spring.mvc.pj_hyr.dto.NoticeDTO">
+		SELECT * FROM notice WHERE num = #{num}
+	</select>
+	
+<!-- (고객) 주문/환불 -->	
+	<!-- 주문목록 -->
+	<select id="orderList" parameterType="java.util.Map" resultType="spring.mvc.pj_hyr.dto.OrderDTO">
+		SELECT * FROM orderview WHERE cust_id= #{sessionId} AND odStatus IN ('주문요청', '주문취소', '주문승인')
+	</select>
+	
+	<!-- 주문건수 -->
+	<select id="orderCnt" resultType="int">
+		SELECT count(*) as cnt from orderlist
+	</select>
+	
+	<!-- 환불 요청 -->
+	<insert id="refundReq" parameterType="spring.mvc.pj_hyr.dto.RefundDTO">
+		INSERT INTO refund VALUES((SELECT NVL(MAX(rfNo)+1, 1) FROM refund), #{odNo}, #{pdNo}, #{quantity}, #{price}, #{cust_id}, DEFAULT, DEFAULT)
+	</insert>
+	
+	<!-- orderExcept -->
+	<update id="orderExcept" parameterType="spring.mvc.pj_hyr.dto.OrderDTO">
+		UPDATE orderlist SET odStatus = '환불요청' WHERE cust_id = #{sessionId} AND odNo = #{odNo}
+	</update>
+	
+	<!-- refundList -->
+	<select id="refundList" parameterType="java.util.Map" resultType="spring.mvc.pj_hyr.dto.RefundDTO">
+		SELECT * FROM refundview WHERE cust_id = #{sessionId} ORDER BY reqDate DESC
+	</select>
+	
+	<!-- 환불내역 건수 -->
+	<select id="refundCnt" resultType="int">
+		SELECT count(*) as cnt from refund
+	</select>
+
+</mapper>   

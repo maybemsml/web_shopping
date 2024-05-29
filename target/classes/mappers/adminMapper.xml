@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="spring.mvc.pj_hyr.dao.ProductDAO">
+	
+	<!-- admin idpw check -->
+	<select id="adminIdPasswordChk" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM admin WHERE adminId = #{adminId} AND adminPw = #{adminPw}
+	</select>
+	
+	<!-- 관리자 상품 -->
+	<!-- 상품 등록 -->
+	<insert id="productInsert" parameterType="spring.mvc.pj_hyr.dto.ProductDTO">
+		INSERT INTO product(pdNo, pdName, pdBrand, pdImg, pdCategory, pdContent, pdPrice, pdQuantity, pdStatus, pdIndate)
+			VALUES ((SELECT NVL(MAX(pdNO)+1, 1) FROM product), #{pdName}, #{pdBrand}, #{pdImg}, #{pdCategory}, #{pdContent}, #{pdPrice}, #{pdQuantity}, #{pdStatus}, sysdate)
+	</insert>
+	<!-- 상품 갯수 -->
+	<select id="productCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) as cnt FROM product
+	</select>
+	<!-- 상품 목록 -->
+	<select id="productList" resultType="spring.mvc.pj_hyr.dto.ProductDTO">
+	SELECT * FROM (SELECT A.*, rownum AS rn
+					 FROM (SELECT pdNo, pdName, pdBrand, pdImg, pdCategory, pdContent, pdPrice, pdQuantity, pdStatus, pdIndate 
+							 FROM product B 
+							WHERE show='y' ORDER BY pdNo DESC) A) 
+				WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+	<!-- 상품 상세 -->
+	<select id="productDetail" resultType="spring.mvc.pj_hyr.dto.ProductDTO">
+		SELECT * FROM product WHERE pdNo = #{pdNo}
+	</select>
+	<!-- 상품 수정 -->
+	<update id="productUpdate" parameterType="spring.mvc.pj_hyr.dto.ProductDTO">
+		UPDATE product SET pdName = #{pdName}, pdBrand = #{pdBrand}, pdImg = #{pdImg}, pdCategory = #{pdCategory}, pdContent = #{pdContent}, pdPrice = #{pdPrice}, pdQuantity = #{pdQuantity}, pdStatus = #{pdStatus}
+						WHERE pdNo = #{pdNo}
+	</update>
+	<!-- 상품 삭제 -->
+	<update id="productDelete" parameterType="spring.mvc.pj_hyr.dto.ProductDTO">
+		UPDATE product SET show = 'n' WHERE pdNo = #{pdNo}
+	</update>
+	
+	
+	
+	<!-- 주문/환불(관리자/고객 내역 action 공유) -->
+	
+	<!-- 주문내역 -->
+	<select id="orderList" resultType="spring.mvc.pj_hyr.dto.OrderDTO">
+		SELECT * FROM (SELECT A.*, rownum AS rn 
+						 FROM (SELECT odNo, pdNo, cust_id, pdCategory, pdBrand, pdName, pdImg, quantity, price, odDate, odStatus FROM orderview B ORDER BY odNo DESC) A)
+				WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+	<!-- 주문내역 건수 -->
+	<select id="orderCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) as cnt FROM orderlist
+	</select>
+	<!-- 주문승인 -->
+	<update id="orderConfirm" parameterType="spring.mvc.pj_hyr.dto.OrderDTO">
+		UPDATE orderlist SET odStatus = '주문승인' WHERE odNo = #{odNo}
+	</update>
+	<!-- 주문취소(거절) -->
+	<update id="orderCancel" parameterType="spring.mvc.pj_hyr.dto.OrderDTO">
+		UPDATE orderlist SET odStatus = '주문취소' WHERE odNo = #{odNo}
+	</update>
+	
+	<!-- 환불내역 -->
+	<select id="refundList" resultType="spring.mvc.pj_hyr.dto.RefundDTO">
+		SELECT * FROM (SELECT A.*, rownum AS rn
+						 FROM (SELECT rfNo, odNo, pdNo, cust_id, pdCategory, pdBrand, pdName, pdImg, quantity, price, reqDate, rfStatus FROM refundview B ORDER BY rfNo DESC) A)
+				WHERE rn BETWEEN #{start} AND #{end} order by rfNo DESC
+	</select>
+	<!-- 환불내역 건수 -->
+	<select id="refundCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) as cnt FROM refund
+	</select>
+	<!-- 환불승인 -->
+	<update id="refundConfirm" parameterType="spring.mvc.pj_hyr.dto.RefundDTO">
+		UPDATE refund SET rfStatus = '환불승인' WHERE rfNo = #{rfNo}
+	</update>
+	
+	<!-- 환불거절 -->
+	<update id="refundReject" parameterType="spring.mvc.pj_hyr.dto.RefundDTO">
+		UPDATE refund SET rfStatus = '환불불가' WHERE rfNo = #{rfNo}
+	</update>
+	
+	<!-- 결산 -->
+	<!-- Cnt -->
+	<select id="totalCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) as cnt FROM orderlist WHERE odStatus = '주문승인'
+	</select>
+	<!-- 결산목록 :: 개별결산(사용x)-->
+	<select id="totalList" resultType="spring.mvc.pj_hyr.dto.OrderDTO">
+		SELECT * FROM (SELECT A.*, rownum AS rn
+						 FROM (SELECT odNo, pdNo, cust_id, pdCategory, pdBrand, pdName, pdImg, quantity, price, odDate, odStatus FROM orderview B ORDER BY odNo DESC) A)
+				WHERE rn BETWEEN #{start} AND #{end} AND odStatus = '주문승인' ORDER BY odDate ASC
+	</select>
+	<!-- 월결산 -->
+	<select id="monthTotal" resultType="spring.mvc.pj_hyr.dto.TotalDTO">
+		SELECT * FROM (SELECT A.*, rownum AS rn 
+						 FROM (SELECT TO_CHAR(oddate, 'yy/mm') month, COUNT(TO_CHAR(oddate, 'yy/mm')) monthlysoldCnt, sum(quantity*price) monthlysales
+								 FROM orderlist B
+								WHERE odstatus = '주문승인' 
+								GROUP BY TO_CHAR(oddate, 'yy/mm')
+								ORDER BY TO_CHAR(oddate, 'yy/mm') ASC) A)
+				WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+	
+
+</mapper>   
